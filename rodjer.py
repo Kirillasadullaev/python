@@ -1,3 +1,5 @@
+from random import randint, choice
+
 print('Привет, меня зовут Роджер. А как тебя?')
 name = input()
 name = name.title()
@@ -15,6 +17,8 @@ while ready not in {'да', 'нет'}:
 if ready == 'да':
     question_quantity = ''  # количество вопросов
     max_answer = ''  # до скольки будем считать
+    right_answers = 0  # кол-во. правильных ответов
+    fails = 0  # кол-во. ошибок
 
     while not question_quantity.isdigit():
         print('Сколько примеров ты готов решить?')
@@ -46,7 +50,51 @@ if ready == 'да':
 
     print('Хорошо, тогда начинаем...')
     for question in range(int(question_quantity)):
-        print('Пример ' + str(question+1) + ':')    
+
+        max_answer = int(max_answer)
+
+        first_num = randint(1, max_answer)
+        second_num = randint(1, max_answer)
+        sign = choice('+-')
+
+        if sign == '-':
+            while first_num < second_num:
+                first_num = randint(1, max_answer)
+                second_num = randint(1, max_answer)
+
+        if sign == '+':
+            while first_num + second_num > max_answer:
+                first_num = randint(1, max_answer)
+                second_num = randint(1, max_answer) 
+
+        print('Пример ' + str(question+1) + ':')
+        print('Сколько будет ' + str(first_num) + sign+  str(second_num) +'?')
+
+        student_answer = int(input())
+
+        if sign == '+':
+            right_answer = first_num + second_num
+
+        if sign == '-':
+            right_answer = first_num - second_num
+
+        if student_answer == right_answer:
+            print('Правильно, молодец!')
+            right_answers += 1   
+        else:
+            print('Неправильно')
+            print(f'Правильный ответ: {right_answer}')
+            fails += 1    
+
+    if fails == 0:
+        print(f'Молодец, {name}! Ты правильно ответил на все вопросы!')
+    else:
+        print(f'Правильных ответов: {right_answers}')
+        print(f'Ошибок: {fails}')
+        
+        
+
+        
 
 if ready == 'нет':
     print('''Передумал? Хорошо, может как-нибудь в следущий раз...
