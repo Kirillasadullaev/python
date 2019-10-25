@@ -1,4 +1,5 @@
 from random import randint, choice
+from timeit import default_timer
 
 print('Привет, меня зовут Роджер. А как тебя?')
 name = input()
@@ -19,6 +20,7 @@ if ready == 'да':
     max_answer = ''  # до скольки будем считать
     right_answers = 0  # кол-во. правильных ответов
     fails = 0  # кол-во. ошибок
+    time_spent = 0  # затраченное время на ответы 
 
     while not question_quantity.isdigit():
         print('Сколько примеров ты готов решить?')
@@ -49,6 +51,7 @@ if ready == 'да':
             max_answer = input()
 
     print('Хорошо, тогда начинаем...')
+
     for question in range(int(question_quantity)):
 
         max_answer = int(max_answer)
@@ -68,9 +71,21 @@ if ready == 'да':
                 second_num = randint(1, max_answer) 
 
         print('Пример ' + str(question+1) + ':')
-        print('Сколько будет ' + str(first_num) + sign+  str(second_num) +'?')
 
-        student_answer = int(input())
+
+        student_answer = ''
+
+        while not student_answer.isdigit():
+            print('Сколько будет ' + str(first_num) + sign+  str(second_num) +'?')
+            
+            start = default_timer()  # начнём отсчёт
+            student_answer = input()
+            stop = default_timer()  # заканчиваем отсчёт
+            time_spent += stop - start
+
+            print('Введи число!')
+
+        student_answer = int(student_answer)
 
         if sign == '+':
             right_answer = first_num + second_num
@@ -86,11 +101,23 @@ if ready == 'да':
             print(f'Правильный ответ: {right_answer}')
             fails += 1    
 
+    if time_spent < 60:
+        time_spent = round(time_spent)
+    else:
+        minutes = time_spent // 60  # Целое число минут, без остатка
+        seconds = time_spent - minutes * 60  # Остаток секунд
+        
+        if time_spent-minutes*60==0:
+            print('Ты справился за ' + str(minutes) + ' минут')
+        else:
+            print('Ты справился за ' + str(minutes) + ' минут и ' + str(seconds) + ' секунд')
+
     if fails == 0:
-        print(f'Молодец, {name}! Ты правильно ответил на все вопросы!')
+        print(f'Молодец, {name}! Ты правильно ответил на все вопросы за {time_spent} ')
     else:
         print(f'Правильных ответов: {right_answers}')
         print(f'Ошибок: {fails}')
+        print(f'Затраченное время: {time_spent}')
         
         
 
