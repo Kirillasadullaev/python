@@ -1,36 +1,55 @@
 from random import randint, choice
 from timeit import default_timer
+from time import sleep
 
-print('Привет, меня зовут Роджер. А как тебя?')
-name = input()
-name = name.title()
-print('Приятно познакомиться, ' + name)
 
-print('''Давай проверим твои знания в математике.
-Ты готов? (да или нет).''')
-ready = input()
-ready = ready.lower()
-while ready not in {'да', 'нет'}:
-    print('Должно быть да или нет, введи заново')
-    ready = input()
-    ready = ready.lower()
+# выбор режима работы программы
+def select_mode():
+    print('''
+    Выберите режим работы:
+    1 Тренировка
+    0 Выход
+    ''')
 
-if ready == 'да':
+    # сделатиь проверку
+    mode = input()
+    return mode
 
-    # функция для возврта временных окончаний
-    def time_endings(digit):
-        digit = str(digit)
-        last_digit = digit[-1]
+# функция для возврта временных окончаний
+def time_endings(digit):
 
-        if last_digit == '1':
-            return 'у'
-        elif 1<int(last_digit)<5:
-            return 'ы'
-        else:
-            return ''
+    digit = str(digit)
+    last_digit = digit[-1]
+
+    if last_digit == '1':
+        return 'у'
+    elif 1<int(last_digit)<5:
+        return 'ы'
+    else:
+        return ''
+
+
+# функция перевода времени с секунд в минуты и секунды
+def seconds_convert(time_in_seconds):
+
+    # определим кол-во. минут и секунд
+    if time_in_seconds < 60:
+        spent_time = f'{round(time_in_seconds)} секунд{time_endings(time_in_seconds)}'
+
+    else:
+        minutes = round(time_in_seconds) // 60  # Целое число минут, без остатка
+        seconds = round(time_in_seconds) - minutes * 60  # Остаток секунд
         
+        if time_in_seconds - (minutes*60) == 0:
+            spent_time = f'{minutes} минут{time_endings(minutes)}'
+        else:
+            spent_time = f'{minutes} минут{time_endings(minutes)} и {seconds} секунд{time_endings(seconds)}'
+    
+    return spent_time
 
 
+# функция вывода и проверки примеров
+def count():
 
     question_quantity = ''  # количество вопросов
     max_answer = ''  # до скольки будем считать
@@ -114,32 +133,36 @@ if ready == 'да':
             print('Правильно, молодец!')
             right_answers += 1   
         else:
+            # добавим пример в файл
+            with open(f'{name}_errors.txt', 'a') as f:
+                f.write(f'{first_num} {sign} {second_num} 3\n')
+
             print('Неправильно')
             print(f'Правильный ответ: {right_answer}')
             fails += 1    
 
-    # определим кол-во. минут и секунд
-    if time_spent < 60:
-        time_spent = f'{round(time_spent)} секунд{time_endings(time_spent)}'
-
-    else:
-        minutes = round(time_spent) // 60  # Целое число минут, без остатка
-        seconds = round(time_spent) - minutes * 60  # Остаток секунд
-        
-        if time_spent - (minutes*60) == 0:
-            time_spent = f'{minutes} минут{time_endings(minutes)}'
-        else:
-            time_spent = f'{minutes} минут{time_endings(minutes)} и {seconds} секунд{time_endings(seconds)}'
-
     # если нет ошибок
     if fails == 0:
-        print(f'Молодец, {name}! Ты правильно ответил на все вопросы за {time_spent} ')
+        print(f'Молодец, {name}! Ты правильно ответил на все вопросы за {seconds_convert(time_spent)} ')
     else:
         print(f'Правильных ответов: {right_answers}')
         print(f'Ошибок: {fails}')
-        print(f'Затраченное время: {time_spent}')    
-              
+        print(f'Затраченное время: {seconds_convert(time_spent)}')    
 
-if ready == 'нет':
-    print('''Передумал? Хорошо, может как-нибудь в следущий раз...
-Пока!''')
+# основной блок программы
+print('Привет, меня зовут Роджер. А как тебя?')
+name = input()
+print(f'Приятно познакомиться, {name.title()}.')
+sleep(1)
+print('Давай проверим твои знания в математике.')
+
+
+
+while True:
+    selected_mode = select_mode()
+    if selected_mode == '1':
+        count()
+    elif selected_mode == '0':
+        break
+    else:
+        pass
