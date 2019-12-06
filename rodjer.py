@@ -137,6 +137,7 @@ def count():
             with open(f'{name}_errors.txt', 'a') as f:
                 f.write(f'{first_num} {sign} {second_num} 3\n')
 
+            
             print('Неправильно')
             print(f'Правильный ответ: {right_answer}')
             fails += 1    
