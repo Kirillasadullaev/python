@@ -1,7 +1,7 @@
 from random import randint, choice
 from timeit import default_timer
 from time import sleep
-
+import os
 
 # выбор режима работы программы
 def select_mode():
@@ -14,6 +14,26 @@ def select_mode():
     # сделатиь проверку
     mode = input()
     return mode
+
+def delete_same_rows(file_name):
+
+    uniques = []
+
+    if os.path.exists(file_name):
+        with open(file_name, 'r') as f, open(f'tmp_{file_name}', 'a') as f2:
+
+            for row in f:
+                if row not in uniques:
+                    uniques.append(row)
+                    f2.write(row)
+
+        os.remove(file_name)
+        os.rename(f'tmp_{file_name}', file_name)
+
+
+        
+
+
 
 # функция для возврта временных окончаний
 def time_endings(digit):
@@ -49,7 +69,7 @@ def seconds_convert(time_in_seconds):
 
 
 # функция вывода и проверки примеров
-def count():
+def count(name):
 
     question_quantity = ''  # количество вопросов
     max_answer = ''  # до скольки будем считать
@@ -157,12 +177,12 @@ print(f'Приятно познакомиться, {name.title()}.')
 sleep(1)
 print('Давай проверим твои знания в математике.')
 
-
+delete_same_rows(f'{name}_errors.txt')
 
 while True:
     selected_mode = select_mode()
     if selected_mode == '1':
-        count()
+        count(name)
     elif selected_mode == '0':
         break
     else:
