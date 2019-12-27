@@ -77,6 +77,9 @@ def count(name):
     fails = 0  # кол-во. ошибок
     time_spent = 0  # затраченное время на ответы 
 
+    uniques_examples = []  # список уникальных примеров
+    example_number = 0  # номер примера
+
     while not question_quantity.isdigit():
         print('Сколько примеров ты готов решить?')
         question_quantity = input()
@@ -105,62 +108,77 @@ def count(name):
             print('Должна быть цифра')
             max_answer = input()
 
+    col_uniques_examples = int(max_answer)**2  # количество уникальных примеров
+
+
     print('Хорошо, тогда начинаем...')
 
-    for question in range(int(question_quantity)):
+    while len(uniques_examples) < col_uniques_examples:
+        
+        for i in range(int(question_quantity)):
 
-        max_answer = int(max_answer)
+            max_answer = int(max_answer)
 
-        first_num = randint(1, max_answer)
-        second_num = randint(1, max_answer)
-        sign = choice('+-')
+            first_num = randint(1, max_answer)
+            second_num = randint(1, max_answer)
+            sign = choice('+-')
 
-        if sign == '-':
-            while first_num < second_num:
-                first_num = randint(1, max_answer)
-                second_num = randint(1, max_answer)
+            if sign == '-':
+                while first_num < second_num:
+                    first_num = randint(1, max_answer)
+                    second_num = randint(1, max_answer)
 
-        if sign == '+':
-            while first_num + second_num > max_answer:
-                first_num = randint(1, max_answer)
-                second_num = randint(1, max_answer) 
+            if sign == '+':
+                while first_num + second_num > max_answer:
+                    first_num = randint(1, max_answer)
+                    second_num = randint(1, max_answer) 
 
-        print('Пример ' + str(question+1) + ':')
+            example = f'{first_num} {sign} {second_num}' 
 
+            if example not in uniques_examples:
 
-        student_answer = ''
+                uniques_examples.append(example)
+                example_number += 1
 
-        while not student_answer.isdigit():
-            print('Сколько будет ' + str(first_num) + sign+  str(second_num) +'?')
-            
-            start = default_timer()  # начнём отсчёт
-            student_answer = input()
-            stop = default_timer()  # заканчиваем отсчёт
-            time_spent += stop - start
+                if example_number > int(question_quantity):
+                    break
 
-            if not student_answer.isdigit():
-                print('Введи число!')
+                print(f'Пример {example_number}:')
+                student_answer = ''
 
-        student_answer = int(student_answer)
+                while not student_answer.isdigit():
+                    print(f'Сколько будет {example}?')
+                    
+                    start = default_timer()  # начнём отсчёт
+                    student_answer = input()
+                    stop = default_timer()  # заканчиваем отсчёт
+                    time_spent += stop - start
 
-        if sign == '+':
-            right_answer = first_num + second_num
+                    if not student_answer.isdigit():
+                        print('Введи число!')
 
-        if sign == '-':
-            right_answer = first_num - second_num
+                student_answer = int(student_answer)
 
-        if student_answer == right_answer:
-            print('Правильно, молодец!')
-            right_answers += 1   
-        else:
-            # добавим пример в файл
-            with open(f'{name}_errors.txt', 'a') as f:
-                f.write(f'{first_num} {sign} {second_num} 3\n')
+                if sign == '+':
+                    right_answer = first_num + second_num
 
-            
-            print('Неправильно')
-            print(f'Правильный ответ: {right_answer}')
-            fails += 1    
+                if sign == '-':
+                    right_answer = first_num - second_num
+
+                if student_answer == right_answer:
+                    print('Правильно, молодец!')
+                    right_answers += 1   
+                else:
+                    # добавим пример в файл
+                    with open(f'{name}_errors.txt', 'a') as f:
+                        f.write(f'{first_num} {sign} {second_num} 3\n')
+
+                    
+                    print('Неправильно')
+                    print(f'Правильный ответ: {right_answer}')
+                    fails += 1
+    else:
+        pass  # доделать сообщение о превышении лимита
 
     # если нет ошибок
     if fails == 0:
